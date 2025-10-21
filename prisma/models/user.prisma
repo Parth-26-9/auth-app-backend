@@ -1,12 +1,8 @@
 model User {
-    id                     String    @id @default(auto()) @map("_id") @db.ObjectId
-    email                  String    @unique
-    password               String?
-    verified               Boolean   @default(false)
-    verificationCode       String?
-    verificationCodeExpiry DateTime?
-    registerCode           String?
-    createdAt              DateTime? @default(now())
-    updatedAt              DateTime? @updatedAt
-    Access                 Access[]
+    id           String   @id @default(uuid())
+    email        String   @unique
+    password     String?
+    registerCode String?
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 }

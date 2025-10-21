@@ -12,8 +12,9 @@ import { AllExceptionsFilter } from "./exception-filters/all-exception.filter";
 import { HttpExceptionsFilter } from "./exception-filters/http-exception.filter";
 import { UnauthorizedExceptionsFilter } from "./exception-filters/unauthorized-exception.filter";
 
-import { WorkspaceModule } from "./modules/workspace/workspace.module";
 import { DbModule } from "./db/db.module";
+import { AuthModule } from "./modules/auth/auth.module";
+import { UserModule } from "./modules/user/user.module";
 
 @Module({
   imports: [
@@ -24,9 +25,9 @@ import { DbModule } from "./db/db.module";
     }),
     // Configure logging
     LoggerModule.forRoot(getLoggerConfig()),
-
     DbModule,
-    WorkspaceModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [

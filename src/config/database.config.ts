@@ -3,5 +3,5 @@ export interface IDatabaseConfig {
 }
 
 export const databaseConfig = (): IDatabaseConfig => ({
-  uri: process.env.MONGODB_URI,
+  uri: process.env.POSTGRES_URL,
 });

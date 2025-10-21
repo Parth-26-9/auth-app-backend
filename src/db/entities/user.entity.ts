@@ -11,15 +11,6 @@ export class UserEntity implements User {
   @ApiProperty({ description: "User password" })
   password: string | null;
 
-  @ApiProperty({ description: "User's verified" })
-  verified: boolean;
-
-  @ApiProperty({ description: "User's verificationCode" })
-  verificationCode: string;
-
-  @ApiProperty({ description: "User's verificationCodeExpiry" })
-  verificationCodeExpiry: Date | null;
-
   @ApiProperty({ description: "User's registerCode" })
   registerCode: string | null;
 
