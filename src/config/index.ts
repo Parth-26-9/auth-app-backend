@@ -1,6 +1,7 @@
 import { IDatabaseConfig, databaseConfig } from "./database.config";
 import { IJwtConfig, jwtConfig } from "./jwt.config";
 import { NodeEnv } from "../shared/enums/node-env.enum";
+import { googleAuthConfig, IGoogleOAuthConfig } from "./google-oauth.config";
 
 export interface Config {
   env: string;
@@ -10,6 +11,8 @@ export interface Config {
   clustering: string;
   database: IDatabaseConfig;
   jwt: IJwtConfig;
+  googleOAuthConfig: IGoogleOAuthConfig;
+  frontendUrl: string;
 }
 
 export const configuration = (): Partial<Config> => ({
@@ -20,4 +23,6 @@ export const configuration = (): Partial<Config> => ({
   clustering: process.env.CLUSTERING,
   database: databaseConfig(),
   jwt: jwtConfig(),
+  googleOAuthConfig: googleAuthConfig(),
+  frontendUrl: process.env.FRONTEND_URL,
 });

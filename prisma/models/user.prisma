@@ -1,8 +1,15 @@
+enum AuthProvider {
+    GOOGLE
+    DEFAULT
+}
+
 model User {
-    id           String   @id @default(uuid())
-    email        String   @unique
+    id           String       @id @default(uuid())
+    name         String
+    email        String       @unique
     password     String?
     registerCode String?
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+    authProvider AuthProvider @default(DEFAULT)
+    createdAt    DateTime     @default(now())
+    updatedAt    DateTime     @updatedAt
 }

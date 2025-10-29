@@ -1,14 +1,23 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {
   IsEmail,
+  IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MaxLength,
   MinLength,
 } from "class-validator";
 
+import { AuthProvider } from "@prisma/client";
+
 export class SignupReqDto {
+  @ApiProperty({ description: "Name" })
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
   @ApiProperty({
     description: "Email address of the user",
     example: "john@example.com",
@@ -29,6 +38,12 @@ export class SignupReqDto {
     message: "Password is too weak",
   })
   password: string;
+
+  @ApiProperty({
+    description: "Auth provider",
+    enum: AuthProvider,
+  })
+  authProvider?: AuthProvider;
 }
 
 export class SignupResDto {

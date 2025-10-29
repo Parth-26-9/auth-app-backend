@@ -30,6 +30,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
    * @returns {void}
    */
   catch(exception, host: ArgumentsHost): void {
+
+    this.logger.debug('Reaching to all exception filter..........')
+
     // Log the exception.
     this.logger.error(exception);
 

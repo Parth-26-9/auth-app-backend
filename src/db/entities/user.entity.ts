@@ -1,9 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { User } from "@prisma/client";
+import { AuthProvider, User } from "@prisma/client";
 
-export class UserEntity implements User {
+export class UserEntity
+  implements Omit<User, "id" | "createdAt" | "updatedAt">
+{
   @ApiProperty({ description: "The unique identifier" })
-  id: string;
+  id?: string;
+
+  @ApiProperty({ description: "Name" })
+  name: string;
 
   @ApiProperty({ description: "Email address" })
   email: string;
@@ -11,12 +16,15 @@ export class UserEntity implements User {
   @ApiProperty({ description: "User password" })
   password: string | null;
 
+  @ApiProperty({ description: "auth provider", enum: AuthProvider })
+  authProvider: AuthProvider;
+
   @ApiProperty({ description: "User's registerCode" })
   registerCode: string | null;
 
   @ApiProperty({ description: "Creation timestamp" })
-  createdAt: Date;
+  createdAt?: Date;
 
   @ApiProperty({ description: "Last update timestamp" })
-  updatedAt: Date;
+  updatedAt?: Date;
 }

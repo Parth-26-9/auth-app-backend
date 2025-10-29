@@ -1,41 +1,51 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from "class-validator";
 import { UserEntity } from "../../../db/entities/user.entity";
 
 export class LoginReqDto {
-  @ApiProperty({ description: 'Email address of the user', example: 'john@example.com' })
+  @ApiProperty({
+    description: "Email address of the user",
+    example: "john@example.com",
+  })
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
   @ApiProperty({
     description:
-      'Password for the user account. Must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one special character.',
-    example: 'MySecurePassword!@#',
+      "Password for the user account. Must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one special character.",
+    example: "MySecurePassword!@#",
   })
   @IsString()
   @MinLength(8)
   @MaxLength(20)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'Password is too weak',
+    message: "Password is too weak",
   })
   password: string;
 }
 
 export class LoginResDto {
   @ApiProperty({
-    description: 'Message to the user',
-    example: 'Login successful',
+    description: "Message to the user",
+    example: "Login successful",
   })
   message: string;
 
   @ApiProperty({
-    description: 'Access token for the user',
+    description: "Access token for the user",
   })
   accessToken: string;
 
   @ApiProperty({
-    description: 'User details',
+    description: "User details",
     type: UserEntity,
   })
   user: UserEntity;

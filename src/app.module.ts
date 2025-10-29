@@ -15,6 +15,7 @@ import { UnauthorizedExceptionsFilter } from "./exception-filters/unauthorized-e
 import { DbModule } from "./db/db.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { UserModule } from "./modules/user/user.module";
+import { MailModule } from "./modules/mail/mail.module";
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { UserModule } from "./modules/user/user.module";
     DbModule,
     AuthModule,
     UserModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [

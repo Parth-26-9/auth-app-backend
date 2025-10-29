@@ -3,10 +3,13 @@
  */
 
 // Import required modules
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { ExceptionConstants } from './exceptions.constants';
-import { IException, IHttpUnauthorizedExceptionResponse } from './exception.inerface';
+import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
+import { HttpException, HttpStatus } from "@nestjs/common";
+import { ExceptionConstants } from "./exceptions.constants";
+import {
+  IException,
+  IHttpUnauthorizedExceptionResponse,
+} from "./exception.inerface";
 
 // Import internal modules
 /**
@@ -16,7 +19,7 @@ export class UnauthorizedException extends HttpException {
   /** The error code. */
   @ApiProperty({
     enum: ExceptionConstants.UnauthorizedCodes,
-    description: 'A unique code identifying the error.',
+    description: "A unique code identifying the error.",
     example: ExceptionConstants.UnauthorizedCodes.TOKEN_EXPIRED_ERROR,
   })
   code: number;
@@ -27,31 +30,31 @@ export class UnauthorizedException extends HttpException {
 
   /** The error message. */
   @ApiProperty({
-    description: 'Message for the exception',
-    example: 'The authentication token provided has expired.',
+    description: "Message for the exception",
+    example: "The authentication token provided has expired.",
   })
   message: string;
 
   /** The detailed description of the error. */
   @ApiProperty({
-    description: 'A description of the error message.',
+    description: "A description of the error message.",
     example:
-      'This error message indicates that the authentication token provided with the request has expired, and therefore the server cannot verify the users identity.',
+      "This error message indicates that the authentication token provided with the request has expired, and therefore the server cannot verify the users identity.",
   })
   description: string;
 
   /** Timestamp of the exception */
   @ApiProperty({
-    description: 'Timestamp of the exception',
-    format: 'date-time',
-    example: '2022-12-31T23:59:59.999Z',
+    description: "Timestamp of the exception",
+    format: "date-time",
+    example: "2022-12-31T23:59:59.999Z",
   })
   timestamp: string;
 
   /** Trace ID of the request */
   @ApiProperty({
-    description: 'Trace ID of the request',
-    example: '65b5f773-df95-4ce5-a917-62ee832fcdd0',
+    description: "Trace ID of the request",
+    example: "65b5f773-df95-4ce5-a917-62ee832fcdd0",
   })
   traceId: string; // Trace ID of the request
 
@@ -89,7 +92,9 @@ export class UnauthorizedException extends HttpException {
    * @param message A string representing the message to include in the response body.
    * @returns An object representing the HTTP response body.
    */
-  generateHttpResponseBody = (message?: string): IHttpUnauthorizedExceptionResponse => {
+  generateHttpResponseBody = (
+    message?: string
+  ): IHttpUnauthorizedExceptionResponse => {
     return {
       code: this.code,
       message: message || this.message,
@@ -106,7 +111,7 @@ export class UnauthorizedException extends HttpException {
    */
   static TOKEN_EXPIRED_ERROR = (msg?: string) => {
     return new UnauthorizedException({
-      message: msg || 'The authentication token provided has expired.',
+      message: msg || "The authentication token provided has expired.",
       code: ExceptionConstants.UnauthorizedCodes.TOKEN_EXPIRED_ERROR,
     });
   };
@@ -118,7 +123,7 @@ export class UnauthorizedException extends HttpException {
    */
   static JSON_WEB_TOKEN_ERROR = (msg?: string) => {
     return new UnauthorizedException({
-      message: msg || 'Invalid token specified.',
+      message: msg || "Invalid token specified.",
       code: ExceptionConstants.UnauthorizedCodes.JSON_WEB_TOKEN_ERROR,
     });
   };
@@ -130,9 +135,9 @@ export class UnauthorizedException extends HttpException {
    */
   static UNAUTHORIZED_ACCESS = (description?: string) => {
     return new UnauthorizedException({
-      message: 'Access to the requested resource is unauthorized.',
+      message:
+        description || "Access to the requested resource is unauthorized.",
       code: ExceptionConstants.UnauthorizedCodes.UNAUTHORIZED_ACCESS,
-      description,
     });
   };
 
@@ -143,7 +148,7 @@ export class UnauthorizedException extends HttpException {
    */
   static RESOURCE_NOT_FOUND = (msg?: string) => {
     return new UnauthorizedException({
-      message: msg || 'Resource Not Found',
+      message: msg || "Resource Not Found",
       code: ExceptionConstants.UnauthorizedCodes.RESOURCE_NOT_FOUND,
     });
   };
@@ -155,7 +160,9 @@ export class UnauthorizedException extends HttpException {
    */
   static USER_NOT_VERIFIED = (msg?: string) => {
     return new UnauthorizedException({
-      message: msg || 'User not verified. Please complete verification process before attempting this action.',
+      message:
+        msg ||
+        "User not verified. Please complete verification process before attempting this action.",
       code: ExceptionConstants.UnauthorizedCodes.USER_NOT_VERIFIED,
     });
   };
@@ -167,7 +174,8 @@ export class UnauthorizedException extends HttpException {
    */
   static UNEXPECTED_ERROR = (error: any) => {
     return new UnauthorizedException({
-      message: 'An unexpected error occurred while processing the request. Please try again later.',
+      message:
+        "An unexpected error occurred while processing the request. Please try again later.",
       code: ExceptionConstants.UnauthorizedCodes.UNEXPECTED_ERROR,
       cause: error,
     });
@@ -182,7 +190,7 @@ export class UnauthorizedException extends HttpException {
     return new UnauthorizedException({
       message:
         msg ||
-        'Your previous login session has been terminated due to a password change or reset. Please log in again with your new password.',
+        "Your previous login session has been terminated due to a password change or reset. Please log in again with your new password.",
       code: ExceptionConstants.UnauthorizedCodes.REQUIRED_RE_AUTHENTICATION,
     });
   };
@@ -194,7 +202,9 @@ export class UnauthorizedException extends HttpException {
    */
   static INVALID_RESET_PASSWORD_TOKEN = (msg?: string) => {
     return new UnauthorizedException({
-      message: msg || 'The reset password token provided is invalid. Please request a new reset password token.',
+      message:
+        msg ||
+        "The reset password token provided is invalid. Please request a new reset password token.",
       code: ExceptionConstants.UnauthorizedCodes.INVALID_RESET_PASSWORD_TOKEN,
     });
   };

@@ -13,7 +13,7 @@ export class UserRepository {
   private readonly logger = new Logger(UserRepository.name);
 
   constructor(private readonly prismaService: PrismaService) {}
-  
+
   async create(userData: UserEntity) {
     try {
       await this.prismaService.user.create({ data: userData });
@@ -44,6 +44,27 @@ export class UserRepository {
     } catch (error) {
       throw new HttpException(
         "Something is wrong while fetch user by email",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  async updatePasswordAndRefreshCode(
+    userId: string,
+    password: string,
+    code: number
+  ) {
+    try {
+      await this.prismaService.user.update({
+        where: { id: userId },
+        data: {
+          password,
+          registerCode: String(code),
+        },
+      });
+    } catch (error) {
+      throw new HttpException(
+        "Something is wrong while update password and refresh token",
         HttpStatus.BAD_REQUEST
       );
     }
