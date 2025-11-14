@@ -7,14 +7,21 @@ import { GoogleStrategy } from "./strategies/google-strategy";
 import { JwtUserStrategy } from "./strategies/jwt-user-strategy";
 import { MailModule } from "../mail/mail.module";
 import { ResetPasswordStrategy } from "./strategies/reset-password.strategy";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
 @Module({
   imports: [
     UserModule,
     MailModule,
-    JwtModule.register({
-      secret: process.env.JWT_PUBLIC_KEY,
-      signOptions: { expiresIn: "24h" },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get("jwt.publicKey"),
+        signOptions: {
+          expiresIn: "1h",
+        },
+      }),
     }),
   ],
   controllers: [AuthController],

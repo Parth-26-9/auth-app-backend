@@ -1,12 +1,13 @@
-import { ExecutionContext, Injectable } from "@nestjs/common";
+import { ExecutionContext, Injectable, Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { UnauthorizedException } from "../../../exceptions/unauthorized.exception";
 
 @Injectable()
 export class GoogleAuthGuard extends AuthGuard("google") {
   JSON_WEB_TOKEN_ERROR = "JsonWebTokenError";
 
   TOKEN_EXPIRED_ERROR = "TokenExpiredError";
+
+  private readonly logger = new Logger(GoogleAuthGuard.name);
 
   canActivate(context: ExecutionContext) {
     // Add your custom authentication logic here
@@ -15,14 +16,7 @@ export class GoogleAuthGuard extends AuthGuard("google") {
   }
 
   handleRequest(err: any, user: any, info: Error, context: any, status: any) {
-    // You can throw an exception based on either "info" or "err" arguments
-    if (info?.name === this.JSON_WEB_TOKEN_ERROR) {
-      throw UnauthorizedException.JSON_WEB_TOKEN_ERROR();
-    } else if (info?.name === this.TOKEN_EXPIRED_ERROR) {
-      throw UnauthorizedException.TOKEN_EXPIRED_ERROR();
-    } else if (info) {
-      throw UnauthorizedException.UNAUTHORIZED_ACCESS(info.message);
-    } else if (err) {
+    if (err) {
       throw err;
     }
 

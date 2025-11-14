@@ -74,9 +74,6 @@ export class AuthController {
     @GetUser() user: UserEntity,
     @Body() resetPasswordReqDto: ResetPasswordReqDto
   ) {
-    this.logger.debug(
-      `ResetPasswordReqDto: ${JSON.stringify(resetPasswordReqDto, null, 2)}`
-    );
     this.logger.debug(`User received: ${JSON.stringify(user, null, 2)}`);
     return await this.authService.resetPassword(
       user.email,

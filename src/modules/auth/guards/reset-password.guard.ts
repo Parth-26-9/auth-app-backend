@@ -1,6 +1,6 @@
 import { ExecutionContext, Injectable } from "@nestjs/common";
+import { UnauthorizedException } from "../../../exceptions";
 import { AuthGuard } from "@nestjs/passport";
-import { UnauthorizedException } from "../../../exceptions/unauthorized.exception";
 
 @Injectable()
 export class ResetPasswordGuard extends AuthGuard("resetPassword") {
@@ -15,13 +15,6 @@ export class ResetPasswordGuard extends AuthGuard("resetPassword") {
   }
 
   handleRequest(err: any, user: any, info: Error, context: any, status: any) {
-    console.log("=== Reset Password Guard ===");
-    console.log("Error:", err);
-    console.log("User:", user);
-    console.log("Info:", info);
-    console.log("Context:", context);
-    console.log("Status:", status);
-
     // You can throw an exception based on either "info" or "err" arguments
     if (info?.name === this.JSON_WEB_TOKEN_ERROR) {
       throw UnauthorizedException.JSON_WEB_TOKEN_ERROR();

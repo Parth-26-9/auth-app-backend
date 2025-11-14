@@ -5,5 +5,5 @@ export class ResetPasswordReqDto {
   @ApiProperty({ description: "confirm password that needs to change" })
   @IsNotEmpty()
   @IsString()
-  newPassword: string;
+  password: string;
 }

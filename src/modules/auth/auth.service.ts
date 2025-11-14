@@ -18,6 +18,7 @@ export class AuthService {
 
   private FRONTEND_URL: string;
   private readonly SALT_ROUNDS = 10;
+  private JWTSecret: string;
 
   constructor(
     private readonly userRepository: UserRepository,
@@ -33,7 +34,7 @@ export class AuthService {
 
     let hashedPassword = "";
 
-    if (authProvider === "DEFAULT") {
+    if (authProvider !== "GOOGLE") {
       const saltOrRounds = this.SALT_ROUNDS;
       hashedPassword = await bcrypt.hash(password, saltOrRounds);
     }
@@ -47,7 +48,7 @@ export class AuthService {
     const userPayload: UserEntity = {
       email,
       name,
-      password: authProvider === "DEFAULT" ? hashedPassword : null,
+      password: authProvider !== "GOOGLE" ? hashedPassword : null,
       registerCode: this.generateCode().toString(),
       authProvider,
     };
@@ -103,7 +104,13 @@ export class AuthService {
   }
 
   async validateGoogleUser(googleUser: any, res: Response) {
-    const user = await this.userRepository.findbyEmail(googleUser.email);
+    this.logger.debug(
+      `Google user received: ${JSON.stringify(googleUser, null, 2)}`
+    );
+    let user: any;
+    if (googleUser?.email) {
+      user = await this.userRepository.findbyEmail(googleUser?.email);
+    }
     if (!user) {
       await this.signup({
         name: googleUser.name,
@@ -146,6 +153,8 @@ export class AuthService {
 
     const url = `${this.FRONTEND_URL}/auth/reset-password?token=${token}`;
 
+    this.logger.debug(`Forget password token : ${token}`);
+
     await this.mailService.sendPasswordResetEmail(user.email, user.name, url);
 
     return {
@@ -156,9 +165,9 @@ export class AuthService {
 
   async resetPassword(email: string, resetPasswrod: ResetPasswordReqDto) {
     const user = await this.userRepository.findbyEmail(email);
-    const { newPassword } = resetPasswrod;
+    const { password } = resetPasswrod;
     const saltOrRounds = this.SALT_ROUNDS;
-    let hashedPassword = await bcrypt.hash(newPassword, saltOrRounds);
+    let hashedPassword = await bcrypt.hash(password, saltOrRounds);
     const updatedCode = this.generateCode();
     await this.userRepository.updatePasswordAndRefreshCode(
       user.id,

@@ -12,7 +12,6 @@ export class MailService {
   ): Promise<void> {
     try {
       const htmlContent = this.getPasswordResetTemplate(name, resetUrl);
-
       await this.mailerService.sendMail({
         to: email,
         subject: "Password Reset Request",
