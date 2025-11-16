@@ -12,15 +12,16 @@ import {
 } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
-import { LoginReqDto, LoginResDto, SignupReqDto, SignupResDto } from "./dtos";
+import { LoginReqDto, LoginResDto, SignupReqDto } from "./dtos";
 import { GoogleAuthGuard } from "./guards/google-auth.guard";
 import { Response } from "express";
 import { ForgetPasswordReqDto } from "./dtos/forget-password.dto";
 import { ResetPasswordReqDto } from "./dtos/reset-password.dto";
 import { UserEntity } from "../../db/entities/user.entity";
 import { GetUser } from "./decorators/get-user.decorator";
-import { JwtUserAuthGuard } from "./guards/jwt-user-auth.guard";
 import { ResetPasswordGuard } from "./guards/reset-password.guard";
+import { CommonResponseDto } from "../../shared/dtos";
+import { LoginResponseData } from "./interfaces";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -29,21 +30,21 @@ export class AuthController {
 
   constructor(private readonly authService: AuthService) {}
 
-  @ApiOkResponse({ type: SignupResDto })
+  @ApiOkResponse({ type: CommonResponseDto })
   @HttpCode(200)
   @Post("signup")
   async signUp(
     @Body(ValidationPipe) signupReqDto: SignupReqDto
-  ): Promise<SignupResDto> {
+  ): Promise<CommonResponseDto<undefined>> {
     return this.authService.signup(signupReqDto);
   }
 
-  @ApiOkResponse({ type: LoginResDto })
+  @ApiOkResponse({ type: CommonResponseDto })
   @HttpCode(200)
   @Post("login")
   async login(
     @Body(ValidationPipe) loginReqDto: LoginReqDto
-  ): Promise<LoginResDto> {
+  ): Promise<CommonResponseDto<LoginResponseData>> {
     return this.authService.login(loginReqDto);
   }
 
@@ -63,7 +64,7 @@ export class AuthController {
   @Post("forget-password")
   async forgetPassword(
     @Body(ValidationPipe) forgetPasswordReqDto: ForgetPasswordReqDto
-  ) {
+  ): Promise<CommonResponseDto<undefined>> {
     return await this.authService.forgetPassword(forgetPasswordReqDto.email);
   }
 
@@ -73,8 +74,7 @@ export class AuthController {
   async resetPassword(
     @GetUser() user: UserEntity,
     @Body() resetPasswordReqDto: ResetPasswordReqDto
-  ) {
-    this.logger.debug(`User received: ${JSON.stringify(user, null, 2)}`);
+  ): Promise<CommonResponseDto<undefined>> {
     return await this.authService.resetPassword(
       user.email,
       resetPasswordReqDto

@@ -1,0 +1,14 @@
+enum Roles {
+    ADMIN
+    MANAGER
+    MEMBER
+}
+
+model Role {
+    id        String   @id @default(uuid())
+    userId    String   @unique
+    user      User     @relation(fields: [userId], references: [id])
+    role      Roles
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

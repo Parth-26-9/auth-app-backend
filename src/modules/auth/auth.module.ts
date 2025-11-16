@@ -8,11 +8,14 @@ import { JwtUserStrategy } from "./strategies/jwt-user-strategy";
 import { MailModule } from "../mail/mail.module";
 import { ResetPasswordStrategy } from "./strategies/reset-password.strategy";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { RoleModule } from "../role/role.module";
+import { AcceptInviteUserStrategy } from "./strategies/accept-invite-user.strategy";
 
 @Module({
   imports: [
     UserModule,
     MailModule,
+    RoleModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -30,6 +33,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
     GoogleStrategy,
     JwtUserStrategy,
     ResetPasswordStrategy,
+    AcceptInviteUserStrategy,
   ],
   exports: [],
 })

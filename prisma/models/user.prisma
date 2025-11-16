@@ -9,6 +9,7 @@ model User {
     email        String       @unique
     password     String?
     registerCode String?
+    role         Role?
     authProvider AuthProvider @default(DEFAULT)
     createdAt    DateTime     @default(now())
     updatedAt    DateTime     @updatedAt

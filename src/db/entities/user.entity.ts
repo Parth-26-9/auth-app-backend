@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { AuthProvider, User } from "@prisma/client";
+import { AuthProvider, Role, Roles, User } from "@prisma/client";
 
 export class UserEntity
   implements Omit<User, "id" | "createdAt" | "updatedAt">

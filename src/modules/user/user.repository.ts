@@ -1,22 +1,14 @@
-import {
-  HttpCode,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-} from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "../../db/db.service";
 import { UserEntity } from "../../db/entities/user.entity";
 
 @Injectable()
 export class UserRepository {
-  private readonly logger = new Logger(UserRepository.name);
-
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(userData: UserEntity) {
     try {
-      await this.prismaService.user.create({ data: userData });
+      return await this.prismaService.user.create({ data: userData });
     } catch (error) {
       throw new HttpException(
         "Something is wrong while create user",

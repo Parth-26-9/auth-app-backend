@@ -1,9 +1,9 @@
 import { ExecutionContext, Injectable } from "@nestjs/common";
-import { UnauthorizedException } from "../../../exceptions";
 import { AuthGuard } from "@nestjs/passport";
+import { UnauthorizedException } from "../../../exceptions";
 
 @Injectable()
-export class ResetPasswordGuard extends AuthGuard("resetPassword") {
+export class AcceptUserInviteGuard extends AuthGuard('acceptUserInvite') {
   JSON_WEB_TOKEN_ERROR = "JsonWebTokenError";
 
   TOKEN_EXPIRED_ERROR = "TokenExpiredError";
@@ -27,6 +27,5 @@ export class ResetPasswordGuard extends AuthGuard("resetPassword") {
     }
 
     return super.handleRequest(err, user, info, context, status);
-
   }
 }

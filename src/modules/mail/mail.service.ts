@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { MailerService } from "@nestjs-modules/mailer";
 
 @Injectable()
@@ -17,10 +17,25 @@ export class MailService {
         subject: "Password Reset Request",
         html: htmlContent,
       });
-      console.log(`Password reset email sent to: ${email}`);
     } catch (error) {
       console.error("Error sending email:", error);
       throw new Error("Failed to send password reset email");
+    }
+  }
+
+  async inviteUser(email: string, resetUrl: string): Promise<void> {
+    try {
+      const htmlContent = this.generateUserInviteTemplate(resetUrl);
+      await this.mailerService.sendMail({
+        to: email,
+        subject: "Invite User",
+        html: htmlContent,
+      });
+    } catch (error) {
+      throw new HttpException(
+        "Something is wrong while invite user",
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 
@@ -122,5 +137,60 @@ export class MailService {
   </div>
 </body>
 </html>`;
+  }
+
+  private generateUserInviteTemplate(resetUrl: string) {
+    return `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>You’re invited!</title>
+    <style>
+      .card {
+        max-width: 480px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 10px;
+        background: #f7f7f7;
+        font-family: Arial, sans-serif;
+        border: 1px solid #ddd;
+      }
+      .btn {
+        background: #4f46e5;
+        padding: 12px 20px;
+        display: inline-block;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #666;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="card">
+      <h2>You’ve been invited!</h2>
+      <p>Hello,</p>
+      <p>
+        You have been invited to join Restaurant as
+        <strong>{{role}}</strong>.
+      </p>
+
+      <p>Click the button below to accept the invite:</p>
+
+      <a class="btn" href=${resetUrl}>Accept Invitation</a>
+
+      <p class="footer">
+        If you did not expect this invitation, you can ignore this email.
+      </p>
+    </div>
+  </body>
+</html>
+`;
   }
 }

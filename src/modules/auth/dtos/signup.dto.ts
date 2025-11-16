@@ -45,10 +45,3 @@ export class SignupReqDto {
   })
   authProvider?: AuthProvider;
 }
-
-export class SignupResDto {
-  @ApiProperty({
-    example: "User account created successfully",
-  })
-  message: string;
-}

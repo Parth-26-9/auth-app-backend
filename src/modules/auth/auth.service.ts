@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { UserRepository } from "../user/user.repository";
 import { JwtService } from "@nestjs/jwt";
-import { LoginReqDto, LoginResDto, SignupReqDto, SignupResDto } from "./dtos";
+import { LoginReqDto, SignupReqDto } from "./dtos";
 import * as bcrypt from "bcryptjs";
 import { Response } from "express";
 import { UserEntity } from "../../db/entities/user.entity";
@@ -11,6 +11,10 @@ import { ConfigService } from "@nestjs/config";
 import { JwtForgetPasswordPayload } from "./interfaces/jwt-forget-password.interface";
 import { MailService } from "../mail/mail.service";
 import { ResetPasswordReqDto } from "./dtos/reset-password.dto";
+import { RoleRepository } from "../role/role.repository";
+import { Roles } from "@prisma/client";
+import { CommonResponseDto } from "../../shared/dtos";
+import { LoginResponseData } from "./interfaces";
 
 @Injectable()
 export class AuthService {
@@ -18,20 +22,21 @@ export class AuthService {
 
   private FRONTEND_URL: string;
   private readonly SALT_ROUNDS = 10;
-  private JWTSecret: string;
 
   constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
+    private readonly roleRepository: RoleRepository
   ) {
     this.FRONTEND_URL = this.configService.get("frontendUrl");
   }
 
-  async signup(signupReqDto: SignupReqDto): Promise<SignupResDto> {
+  async signup(
+    signupReqDto: SignupReqDto
+  ): Promise<CommonResponseDto<undefined>> {
     const { email, password, name, authProvider } = signupReqDto;
-
     let hashedPassword = "";
 
     if (authProvider !== "GOOGLE") {
@@ -52,11 +57,15 @@ export class AuthService {
       registerCode: this.generateCode().toString(),
       authProvider,
     };
-
-    await this.userRepository.create(userPayload);
-
+    const dbResult = await this.userRepository.create(userPayload);
+    await this.roleRepository.create({
+      userId: dbResult.id,
+      role: Roles.ADMIN,
+    });
     return {
+      success: true,
       message: "User registred successfully",
+      data: undefined,
     };
   }
 
@@ -66,7 +75,9 @@ export class AuthService {
     return Math.floor(Math.random() * (OTP_MAX - OTP_MIN + 1)) + OTP_MIN;
   }
 
-  async login(loginReqDto: LoginReqDto): Promise<LoginResDto> {
+  async login(
+    loginReqDto: LoginReqDto
+  ): Promise<CommonResponseDto<LoginResponseData>> {
     const { email, password } = loginReqDto;
 
     const user = await this.userRepository.findbyEmail(email);
@@ -97,9 +108,12 @@ export class AuthService {
     delete user.password;
 
     return {
+      success: true,
       message: "Login successfull",
-      accessToken,
-      user,
+      data: {
+        accessToken,
+        user,
+      },
     };
   }
 
@@ -122,7 +136,7 @@ export class AuthService {
         email: googleUser.email,
         password: null,
       });
-      const url = `${this.FRONTEND_URL}/auth/callback?token=${result.accessToken}`;
+      const url = `${this.FRONTEND_URL}/auth/callback?token=${result.data.accessToken}`;
       return res.redirect(url);
     }
     return await this.login({
@@ -131,7 +145,7 @@ export class AuthService {
     });
   }
 
-  async forgetPassword(email: string) {
+  async forgetPassword(email: string): Promise<CommonResponseDto<undefined>> {
     const user = await this.userRepository.findbyEmail(email);
     if (!user) {
       throw UnauthorizedException.UNAUTHORIZED_ACCESS("user not found");
@@ -153,17 +167,19 @@ export class AuthService {
 
     const url = `${this.FRONTEND_URL}/auth/reset-password?token=${token}`;
 
-    this.logger.debug(`Forget password token : ${token}`);
-
     await this.mailService.sendPasswordResetEmail(user.email, user.name, url);
 
     return {
       success: true,
       message: "Password reset email sent successfully",
+      data: undefined,
     };
   }
 
-  async resetPassword(email: string, resetPasswrod: ResetPasswordReqDto) {
+  async resetPassword(
+    email: string,
+    resetPasswrod: ResetPasswordReqDto
+  ): Promise<CommonResponseDto<undefined>> {
     const user = await this.userRepository.findbyEmail(email);
     const { password } = resetPasswrod;
     const saltOrRounds = this.SALT_ROUNDS;
@@ -174,9 +190,11 @@ export class AuthService {
       hashedPassword,
       updatedCode
     );
+
     return {
       success: true,
       message: "Password reset successfully",
+      data: undefined,
     };
   }
 }
